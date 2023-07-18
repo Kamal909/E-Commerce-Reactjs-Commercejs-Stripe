@@ -39,7 +39,7 @@ const  backStep = () =>setActiveStep((preActiveStep) => preActiveStep - 1);
 
     const Confirmation = () => (
         <div >
-            Confirmation
+            Thank you message
         </div>
     )
 
