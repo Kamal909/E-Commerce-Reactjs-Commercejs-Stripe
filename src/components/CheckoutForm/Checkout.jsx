@@ -17,6 +17,8 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
     const classes = useStyles();
 
     useEffect(() => {
+
+        
        const generateToken = async () => {
         try {
             const token = await commerce.checkout.generateToken(cart.id, { type:'cart' } );
