@@ -1,11 +1,14 @@
 
 import React,{ useState, useEffect }  from 'react';
 import { Paper, Stepper, Step,  StepLabel, Typography, CircularProgress, Divider, Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 import useStyles from './styles';
 import AddressForm from './AddressForm';
 import PaymentForm from './PaymentForm';
 import { commerce } from '../lib/commerce';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const steps =['Shiping Address', 'Payment Details'];
@@ -15,6 +18,8 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
     const [checkoutToken, setCheckoutToken] = useState(null);
     const [shippingData, setShippingData] = useState({});
     const classes = useStyles();
+    const navigate = useNavigate();
+    const [isFinished, setIsFinished] = useState(false);
 
     useEffect(() => {
 
@@ -25,25 +30,52 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
             setCheckoutToken(token);
         }
         catch (error) {
-            console.log("Error Testing");
+           navigate('/');
         }
        }
-       generateToken();
+        generateToken();
 
-    }, [ cart]);
-const  nextStep = () =>setActiveStep((preActiveStep) => preActiveStep + 1);
-const  backStep = () =>setActiveStep((preActiveStep) => preActiveStep - 1);                                                                                                                                                                                                                                                                                                                                                            
+        }, [ cart]);
+        const  nextStep = () =>setActiveStep((preActiveStep) => preActiveStep + 1);
+        const  backStep = () =>setActiveStep((preActiveStep) => preActiveStep - 1); 
+                                                                                                                                                                                                                                                                                                                                                                
 
-    const next = (data) => {
-     setShippingData(data);
-     nextStep();
+            const next = (data) => {
+            setShippingData(data);
+            nextStep();
+            }
+
+        const timeout = () => {
+            setTimeout(() => {
+                setIsFinished(true);
+            }, 3000);
+        }
+            
+       
+  let Confirmation = () => (order.customer ? (
+    <>
+      <div>
+        <Typography variant="h5">Thank you for your purchase, {order.customer.firstname} {order.customer.lastname}!</Typography>
+        <Divider className={classes.divider} />
+        <Typography variant="subtitle2">Order ref: {order.customer_reference}</Typography>
+      </div>
+      <br />
+      <Button component={Link} variant="outlined" type="button" to="/">Back to home</Button>
+    </>
+  ) : (
+    <div className={classes.spinner}>
+      <CircularProgress />
+    </div>
+  ));
+
+    if(error)
+    {
+        <>
+        <Typography variant='h5'>Error: {error}</Typography>
+        <br />
+        <Button component={Link} to="/" variant='outlined' type="button"></Button>
+        </>
     }
-
-    const Confirmation = () => (
-        <div >
-            Thank you message
-        </div>
-    )
 
     const Form = () => activeStep === 0
         ? <AddressForm checkoutToken={ checkoutToken } 
@@ -55,7 +87,8 @@ const  backStep = () =>setActiveStep((preActiveStep) => preActiveStep - 1);
             checkoutToken={checkoutToken} 
             backStep={backStep} 
             nextStep={nextStep} 
-            onCaptureCheckout={onCaptureCheckout}/>
+            onCaptureCheckout={onCaptureCheckout}
+            timeout= {timeout}/>
 
   return (
     <>

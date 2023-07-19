@@ -4,6 +4,7 @@ import Navbar from './components/Navbar/Navbar';
 import Cart from './components/Cart/Cart';
 import Checkout from './components/CheckoutForm/Checkout';
 import  {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { commerce } from '../src/components/lib/commerce';
 
 
@@ -13,7 +14,7 @@ const App = () => {
   const [cart, setCart] = useState([]);
   const [order, setOrder] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
-  
+  //const navigate = useNavigate();
     const fetchProducts = async () => {
       const { data } = await commerce.products.list();
 
@@ -45,6 +46,10 @@ const App = () => {
     const handleEmptyCart = async () => {
       const { cart } = await commerce.cart.empty();
       setCart(cart);
+      // console.log("cart is empty");
+      // navigate("/");
+      window.location.href = '/';
+     
     }
    
     const refreshCart = async () => {
@@ -73,7 +78,7 @@ const App = () => {
     return (
       <Router> 
         <div>
-           <Navbar totalItems={cart.total_items} />
+        <Navbar totalItems={ (cart) ? cart.total_items : '0'} />
             <Routes>
               <Route exact path='/' element={<Products products={products} onAddToCart={handleAddToCart}/>}/>
               <Route exact path='/cart' 

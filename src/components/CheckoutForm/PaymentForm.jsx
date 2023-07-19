@@ -7,7 +7,7 @@ import Review from './Review';
 
 const stripePromise = loadStripe('pk_test_51NU48yKOEYxc9APJRLMSFoTKYntISLzBt0XlFHUP8ZyBBHK0sz7MsTLvRPpLXpM8XmLwVAyFawaIjQTm2SqYvOkm00GiaYu0qj');
 
-const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout }) => {
+const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout, timeout }) => {
   const handleSubmit = async (event, elements, stripe) => {
     event.preventDefault();
 
@@ -38,7 +38,9 @@ const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptur
           postal_zip_code: shippingData.zip, 
           country: shippingData.shippingCountry 
         },
+        
         fulfillment: { shipping_method: shippingData.shippingOption },
+        pay_what_you_want: '222.20',
         payment: {
           gateway: 'test_gateway',
           card: {
@@ -47,12 +49,13 @@ const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptur
             expiry_year: '2023',
             cvc: '123',
             postal_zip_code: '94103',
+            
           },
         },
       };
 
       onCaptureCheckout(checkoutToken.id, orderData);
-      console.log("testingkkkkk");
+      timeout();
       nextStep();
     }
   };
